@@ -3,7 +3,8 @@ import {
   fetchAllContacts,
   addContact,
   deleteContact,
-} from '../redux/contactsOperations';
+  updateContact,
+} from './contacts-operations';
 
 const pendingReducer = state => {
   state.isLoading = true;
@@ -20,6 +21,7 @@ export const contactsSlice = createSlice({
     items: [],
     isLoading: false,
     error: null,
+    isRefresh: false,
   },
   extraReducers: builder => {
     builder
@@ -33,7 +35,7 @@ export const contactsSlice = createSlice({
       .addCase(addContact.pending, pendingReducer)
       .addCase(addContact.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.items = [...state.items, action.payload];
+        state.items = [action.payload, ...state.items];
         state.error = null;
       })
       .addCase(addContact.rejected, rejectedReducer)
@@ -46,7 +48,24 @@ export const contactsSlice = createSlice({
         );
         state.items.splice(index, 1);
       })
-      .addCase(deleteContact.rejected, rejectedReducer);
+      .addCase(deleteContact.rejected, rejectedReducer)
+      .addCase(updateContact.pending, (state, action) => {
+        state.isLoading = true;
+        state.isRefresh = true;
+      })
+      .addCase(updateContact.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isRefresh = false;
+        const index = state.items.findIndex(
+          contact => contact.id === action.payload.id
+        );
+        state.items.slice(index, 0, action.payload);
+      })
+      .addCase(updateContact.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isRefresh = false;
+        state.error = action.payload;
+      });
   },
 });
 

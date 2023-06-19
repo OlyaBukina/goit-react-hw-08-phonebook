@@ -1,32 +1,64 @@
 import PropTypes from 'prop-types';
-import { useDispatch } from 'react-redux';
-import { deleteContact } from 'redux/contactsOperations';
+import { useState } from 'react';
 
-import { Item, Button } from './ContactItem.styled';
+import { useDispatch } from 'react-redux';
+import {
+  deleteContact,
+  updateContact,
+} from 'redux/contacts/contacts-operations';
+import IconButton from '@mui/material/IconButton';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import Typography from '@mui/material/Typography';
+
+import { ContactsForm } from '../ContactsForm/ContactsForm';
+
+import { Item } from './ContactItem.styled';
+import { ModalWrapper } from '../Modal/Modal';
 
 export const ContactItem = ({ contact }) => {
   const dispatch = useDispatch();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const toggleModal = () => setIsModalOpen(state => !state);
 
   const handleDelete = () => dispatch(deleteContact(id));
 
-  const { id, name, phone } = contact;
+  const { id, name, number } = contact;
   return (
     <Item>
       <p>
-        {name}: {phone}
+        {name}: {number}
       </p>
-      <Button type="button" onClick={handleDelete}>
-        Delete
-      </Button>
+      <IconButton type="button" onClick={toggleModal} aria-label="edit">
+        <EditIcon />
+      </IconButton>
+
+      {isModalOpen && (
+        <ModalWrapper onClose={toggleModal} open={isModalOpen}>
+          <Typography component="h3" variant="h5">
+            Edit contact
+          </Typography>
+          <ContactsForm
+            onSave={toggleModal}
+            actionOnSubmit={updateContact}
+            actionBtnText="Save changes"
+            contact={contact}
+          />
+        </ModalWrapper>
+      )}
+
+      <IconButton type="button" onClick={handleDelete} aria-label="delete">
+        <DeleteIcon />
+      </IconButton>
     </Item>
   );
 };
 
 ContactItem.propTypes = {
   contact: PropTypes.exact({
-    createdAt: PropTypes.string,
     name: PropTypes.string.isRequired,
-    phone: PropTypes.string.isRequired,
+    number: PropTypes.string.isRequired,
     id: PropTypes.string.isRequired,
   }),
 };

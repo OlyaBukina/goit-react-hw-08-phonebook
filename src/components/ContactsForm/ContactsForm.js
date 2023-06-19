@@ -1,73 +1,106 @@
-import { Formik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectContacts } from 'redux/selectors';
-import { addContact } from 'redux/contactsOperations';
-import { customAlphabet } from 'nanoid';
+// import { addContact } from 'redux/contacts/contacts-operations';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { selectContacts } from 'redux/contacts/contacts-selectors';
 
-import { contactsSchema, validateName, validateNumber } from './formValidation';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
+import TextField from '@mui/material/TextField';
 
-import {
-  StyledForm,
-  Label,
-  FormButton,
-  FormField,
-  FormError,
-} from './ContactsForm.styled';
+import { contactsSchema } from './formValidation';
 
-const initialValues = {
-  name: '',
-  phone: '',
-};
-const nanoId = customAlphabet('1234567890', 4);
-
-export const ContactsForm = () => {
+export const ContactsForm = ({
+  onSave,
+  actionOnSubmit,
+  actionBtnText,
+  contact = {},
+}) => {
   const { items } = useSelector(selectContacts);
   const dispatch = useDispatch();
 
-  const onFormSubmit = (values, { resetForm }) => {
-    const contactExists = items.find(
-      ({ name }) => name.toLowerCase() === values.name.toLowerCase()
-    );
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(contactsSchema),
+  });
 
+  const onSubmit = data => {
+    const contactExists = items.find(
+      ({ name }) => name.toLowerCase() === data.name.toLowerCase()
+    );
     if (contactExists) {
-      alert(`${values.name} is already in contacts.`);
+      alert(`${data.name} is already in contacts.`);
       return;
     }
-    const newContact = { createdAt: new Date(), ...values, id: nanoId() };
-    dispatch(addContact(newContact));
-    resetForm();
+    dispatch(actionOnSubmit({ ...contact, ...data }));
+    onSave();
+    reset();
   };
 
   return (
-    <Formik
-      initialValues={initialValues}
-      onSubmit={onFormSubmit}
-      validationSchema={contactsSchema}
-    >
-      <StyledForm autoComplete="off">
-        <Label>
-          Name
-          <FormField
-            validate={validateName}
-            type="text"
-            name="name"
-            placeholder="Jacob Mercer"
-          ></FormField>
-          <FormError name="name" component="div" />
-        </Label>
+    <Container component="div">
+      <Box
+        sx={{
+          marginTop: 8,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <Box
+          component="form"
+          noValidate
+          onSubmit={handleSubmit(onSubmit)}
+          sx={{ mt: 3 }}
+        >
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                {...register('name')}
+                error={errors.name ? true : false}
+                helperText={errors.name?.message}
+                autoComplete="given-name"
+                name="name"
+                defaultValue={contact.name}
+                required
+                fullWidth
+                id="name"
+                label="Name"
+                autoFocus
+              />
+            </Grid>
 
-        <Label>
-          Number
-          <FormField
-            validate={validateNumber}
-            type="tel"
-            name="phone"
-            placeholder="123-45-67"
-          ></FormField>
-          <FormError name="phone" component="div" />
-        </Label>
-        <FormButton type="submit">Add contact</FormButton>
-      </StyledForm>
-    </Formik>
+            <Grid item xs={12}>
+              <TextField
+                {...register('number')}
+                error={errors.number ? true : false}
+                helperText={errors.number?.message}
+                required
+                fullWidth
+                id="number"
+                label="Phone number"
+                defaultValue={contact.number}
+                name="number"
+                autoComplete="number"
+              />
+            </Grid>
+          </Grid>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+          >
+            {actionBtnText}
+          </Button>
+        </Box>
+      </Box>
+    </Container>
   );
 };
