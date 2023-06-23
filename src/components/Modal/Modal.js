@@ -1,16 +1,14 @@
-import Box from '@mui/material/Box';
-import Modal from '@mui/material/Modal';
+import { Box, Modal, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import IconButton from '@mui/material/IconButton';
 
 const style = {
   position: 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
+  maxWidth: '75%',
   bgcolor: 'background.paper',
-  border: '2px solid #000',
+  borderRadius: 2.5,
   boxShadow: 24,
   pt: 2,
   px: 4,
@@ -25,8 +23,13 @@ export const ModalWrapper = ({ children, onClose, open }) => {
       aria-labelledby="child-modal-title"
       aria-describedby="child-modal-description"
     >
-      <Box sx={{ ...style, width: '50% ' }}>
-        <IconButton type="button" onClick={onClose} aria-label="close">
+      <Box sx={{ ...style }}>
+        <IconButton
+          type="button"
+          onClick={onClose}
+          aria-label="close"
+          sx={{ position: 'absolute', top: '8px', right: '8px' }}
+        >
           <CloseIcon />
         </IconButton>
         {children}

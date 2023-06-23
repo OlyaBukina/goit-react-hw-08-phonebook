@@ -1,13 +1,14 @@
+import { Box } from '@mui/material';
 import { useAuth } from '../../hooks/useAuth';
 
-import { NavList, Link } from './Navigation.styled';
+import { Button } from '../Button/Button.styled';
 
 export const Navigation = () => {
   const { isLoggedIn } = useAuth();
   return (
-    <NavList>
-      <Link to="/">Home</Link>
-      {isLoggedIn && <Link to="/contacts">Contacts</Link>}
-    </NavList>
+    <Box sx={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+      <Button to="/">Home</Button>
+      {isLoggedIn && <Button to="/contacts">Contacts</Button>}
+    </Box>
   );
 };

@@ -1,14 +1,11 @@
-import { NavLink } from 'react-router-dom';
-
-
-import { AuthNavList } from './AuthNav.styled';
+import { Box } from '@mui/material';
+import { Button } from '../Button/Button.styled';
 
 export const AuthNav = () => {
- 
   return (
-    <AuthNavList>
-      <NavLink to="/signup">Sign up</NavLink>
-      <NavLink to="/login">Log in</NavLink>
-    </AuthNavList>
+    <Box sx={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+      <Button to="/signup">Sign up</Button>
+      <Button to="/login">Log in</Button>
+    </Box>
   );
 };

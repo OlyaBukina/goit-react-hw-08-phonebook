@@ -1,11 +1,8 @@
 import { useDispatch } from 'react-redux';
 import { useAuth } from '../../hooks/useAuth';
 import { logOut } from '../../redux/auth/auth-operations';
-
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Avatar from '@mui/material/Avatar';
+import { Avatar, UserEmail, MenuWrapper } from './UserMenu.styled';
+import { Button } from '../Button/Button.styled';
 
 export const UserMenu = () => {
   const { user } = useAuth();
@@ -13,20 +10,16 @@ export const UserMenu = () => {
   const avatarLetter = user.email.slice(0, 1).toUpperCase();
 
   return (
-    <Box sx={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-      <Avatar sx={{ bgcolor: '#cdc1d5' }}>{avatarLetter}</Avatar>
-      <Typography component="p" sx={{ fontSize: '18px' }}>
-        {user.email}
-      </Typography>
+    <MenuWrapper>
+      <Avatar>{avatarLetter}</Avatar>
+      <UserEmail>{user.email}</UserEmail>
       <Button
-        variant="contained"
-        type="button"
         onClick={() => {
           dispatch(logOut());
         }}
       >
         Logout
       </Button>
-    </Box>
+    </MenuWrapper>
   );
 };

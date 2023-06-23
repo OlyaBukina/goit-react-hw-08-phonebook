@@ -1,22 +1,27 @@
-import { useSelector, useDispatch } from 'react-redux';
-import IconButton from '@mui/material/IconButton';
 import { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { fetchAllContacts } from 'redux/contacts/contacts-operations';
 import { selectContacts } from 'redux/contacts/contacts-selectors';
-import { ModalWrapper } from '../components/Modal/Modal';
-import { addContact } from '../redux/contacts/contacts-operations';
-import { ContactsForm } from '../components/ContactsForm/ContactsForm';
-import { ContactsList } from '../components/ContactsList/ContactsList';
-import { Filter } from '../components/Filter/Filter';
-import { Loader } from '../components/Loader/Loader';
-import { Notification } from '../components/Notification/Notification';
-import Container from '@mui/material/Container';
+import { addContact } from 'redux/contacts/contacts-operations';
+import { ContactsForm } from 'components/ContactsForm/ContactsForm';
+import { ModalWrapper } from 'components/Modal/Modal';
+import { ContactsList } from 'components/ContactsList/ContactsList';
+import { Filter } from 'components/Filter/Filter';
+import { Loader } from 'components/Loader/Loader';
+import { Notification } from 'components/Notification/Notification';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import Typography from '@mui/material/Typography';
+import {
+  useTheme,
+  Box,
+  Typography,
+  Container,
+  IconButton,
+} from '@mui/material';
 
 const Contacts = () => {
   const { items, isLoading, error, isRefresh } = useSelector(selectContacts);
   const dispatch = useDispatch();
+  const theme = useTheme();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const toggleModal = () => setIsModalOpen(state => !state);
@@ -24,27 +29,69 @@ const Contacts = () => {
   useEffect(() => {
     dispatch(fetchAllContacts());
   }, [dispatch, isRefresh]);
-  return (
-    <Container component="main" maxWidth="xs">
-      <IconButton type="button" onClick={toggleModal} aria-label="edit">
-        <PersonAddIcon />
-      </IconButton>
-      {isModalOpen && (
-        <ModalWrapper onClose={toggleModal} open={isModalOpen}>
-          <Typography component="h3" variant="h5">
-            Phonebook
-          </Typography>
-          <ContactsForm
-            onSave={toggleModal}
-            actionOnSubmit={addContact}
-            actionBtnText="Add contact"
-          />
-        </ModalWrapper>
-      )}
 
-      <h2>Contacts</h2>
+  return (
+    <Container
+      component="main"
+      maxWidth="s"
+      sx={{
+        position: 'relative',
+        maxWidth: 580,
+        backgroundColor: '#fff',
+        padding: '18px',
+        borderRadius: '10px',
+      }}
+    >
+      {isModalOpen && (
+        <>
+          <ModalWrapper onClose={toggleModal} open={isModalOpen}>
+            <Box>
+              <Typography
+                component="h3"
+                variant="h5"
+                textAlign="center"
+                mt="16px"
+                color={theme.palette.primary.main}
+              >
+                Add contact
+              </Typography>
+            </Box>
+            <ContactsForm
+              onSave={toggleModal}
+              actionOnSubmit={addContact}
+              actionBtnText="Add contact"
+            />
+          </ModalWrapper>
+        </>
+      )}
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
+        <Typography
+          component="h4"
+          variant="h3"
+          mt="16px"
+          mb="16px"
+          fontSize="2rem"
+          color={theme.palette.primary.main}
+        >
+          Contacts
+        </Typography>
+        <IconButton
+          type="button"
+          onClick={toggleModal}
+          aria-label="edit"
+          sx={{ height: '40px' }}
+        >
+          <PersonAddIcon />
+        </IconButton>
+      </Box>
       <Filter />
-      {isLoading && !error && <Loader />}
+      {isLoading && !error && <Loader position="flex-start" height="50vh" />}
       {!isLoading && !error && !isRefresh && <ContactsList />}
       {!isLoading && !error && items.length === 0 && (
         <Notification message="There are no contacts" />

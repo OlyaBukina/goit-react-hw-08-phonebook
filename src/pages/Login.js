@@ -3,20 +3,21 @@ import { useDispatch } from 'react-redux';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { logIn } from '../redux/auth/auth-operations';
+import { logIn } from 'redux/auth/auth-operations';
 import { ErrorMes } from './Pages.styled';
-
-import FormControl from '@mui/material/FormControl';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
-import TextField from '@mui/material/TextField';
-import InputLabel from '@mui/material/InputLabel';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputAdornment from '@mui/material/InputAdornment';
-import IconButton from '@mui/material/IconButton';
+import {
+  FormControl,
+  Grid,
+  Box,
+  Button,
+  Container,
+  Typography,
+  TextField,
+  InputLabel,
+  OutlinedInput,
+  InputAdornment,
+  IconButton,
+} from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
@@ -56,82 +57,85 @@ const Login = () => {
 
   return (
     <>
-      <Container component="main" maxWidth="xs">
+      <Container
+        component="div"
+        maxWidth="xs"
+        sx={{
+          marginTop: 8,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          backgroundColor: '#fff',
+          padding: '18px',
+          borderRadius: '10px',
+        }}
+      >
+        <Typography component="h2" variant="h5">
+          Log in
+        </Typography>
         <Box
-          sx={{
-            marginTop: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
+          component="form"
+          noValidate
+          onSubmit={handleSubmit(onSubmit)}
+          sx={{ mt: 3 }}
         >
-          <Typography component="h1" variant="h5">
-            Log in
-          </Typography>
-          <Box
-            component="form"
-            noValidate
-            onSubmit={handleSubmit(onSubmit)}
-            sx={{ mt: 3 }}
-          >
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <TextField
-                  {...register('email', { required: true })}
-                  error={errors.email ? true : false}
-                  helperText={errors.email?.message}
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                {...register('email', { required: true })}
+                error={errors.email ? true : false}
+                helperText={errors.email?.message}
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl fullWidth required variant="outlined">
+                <InputLabel
+                  htmlFor="outlined-adornment-password"
+                  error={errors.password ? true : false}
+                >
+                  Password
+                </InputLabel>
+                <OutlinedInput
+                  id="outlined-adornment-password"
+                  type={showPassword ? 'text' : 'password'}
+                  {...register('password')}
+                  error={errors.password ? true : false}
+                  name="password"
                   required
                   fullWidth
-                  id="email"
-                  label="Email Address"
-                  name="email"
-                  autoComplete="email"
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                  label="Password"
                 />
-              </Grid>
-              <Grid item xs={12}>
-                <FormControl fullWidth required variant="outlined">
-                  <InputLabel
-                    htmlFor="outlined-adornment-password"
-                    error={errors.password ? true : false}
-                  >
-                    Password
-                  </InputLabel>
-                  <OutlinedInput
-                    id="outlined-adornment-password"
-                    type={showPassword ? 'text' : 'password'}
-                    {...register('password')}
-                    error={errors.password ? true : false}
-                    name="password"
-                    required
-                    fullWidth
-                    endAdornment={
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={handleClickShowPassword}
-                          edge="end"
-                        >
-                          {showPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    }
-                    label="Password"
-                  />
-                </FormControl>
-                {errors.password && (
-                  <ErrorMes>{errors.password?.message}</ErrorMes>
-                )}
-              </Grid>
+              </FormControl>
+              {errors.password && (
+                <ErrorMes>{errors.password?.message}</ErrorMes>
+              )}
             </Grid>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Log in
-            </Button>
-          </Box>
+          </Grid>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+          >
+            Log in
+          </Button>
         </Box>
       </Container>
     </>

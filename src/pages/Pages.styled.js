@@ -11,3 +11,12 @@ export const ErrorMes = styled.p`
   margin-bottom: 0;
   margin-left: 14px;
 `;
+export const TitleWrapper = styled.div`
+  width: 600px;
+`;
+
+export const TitleSpan = styled.span`
+  font-weight: 700;
+  color: ${({ color }) => color};
+  text-transform: uppercase;
+`;
